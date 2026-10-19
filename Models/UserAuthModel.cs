@@ -1,4 +1,4 @@
-﻿namespace HMS_Temp_Humdity_Auth.Models
+namespace HMS_Temp_Humdity_Auth.Models
 {
 	using MongoDB.Bson;
 	using MongoDB.Bson.Serialization.Attributes;
@@ -22,7 +22,7 @@
 
 			public CompanyPermission CompanyPermissions { get; set; }
 
-			public Role Role { get; set; }
+			public Role Role { get; set; } = Role.Customer;
 		}
 
 		[Flags]
@@ -36,13 +36,14 @@
 			AlertManage = 1L << 3,
 			Dashboard = 1L << 4,
 			CompanyManage = 1L << 5,
+			DevicePermissionManage = 1L << 6,
 
 			Full = UserManage
 				 | DeviceManage
 				 | LocationManage
 				 | AlertManage
 				 | Dashboard
-				 | CompanyManage
+				 | CompanyManage | DevicePermissionManage
 		}
 
 		public enum Role
