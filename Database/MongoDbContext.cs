@@ -1,5 +1,5 @@
-﻿using HMS_Temp_Humdity_Auth.Config;
-using HMS_Temp_Humdity_Auth.Models.HMS_Temp_Humdity_Auth.Models;
+using HMS_Temp_Humdity_Auth.Config;
+using HMS_Temp_Humdity_Auth.Models;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
@@ -9,6 +9,7 @@ namespace HMS_Temp_Humdity_Auth.Database
 	{
 		private readonly IMongoDatabase _database;
 		private readonly MongoDbSettings _settings;
+
 		public MongoDbContext(IOptions<MongoDbSettings> options)
 		{
 			_settings = options.Value;
@@ -17,6 +18,9 @@ namespace HMS_Temp_Humdity_Auth.Database
 
 			_database = client.GetDatabase(_settings.DatabaseName);
 		}
+
+		public IMongoDatabase Database => _database;
+
 		public IMongoCollection<UserAuthModel> Users => _database.GetCollection<UserAuthModel>(_settings.UserCollectionName);
 	}
 }

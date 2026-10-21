@@ -1,4 +1,4 @@
-using HMS_Temp_Humdity_Auth.Models.HMS_Temp_Humdity_Auth.Models;
+using HMS_Temp_Humdity_Auth.Models;
 
 namespace HMS_Temp_Humdity_Auth.Database.Interface
 {

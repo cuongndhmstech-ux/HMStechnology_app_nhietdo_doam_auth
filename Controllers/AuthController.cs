@@ -1,4 +1,4 @@
-﻿using HMS_Temp_Humdity_Auth.DTOs;
+using HMS_Temp_Humdity_Auth.DTOs;
 using HMS_Temp_Humdity_Auth.Services.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,29 +22,30 @@ namespace HMS_Temp_Humdity_Auth.Controllers
 			try
 			{
 				var result = await _authService.LoginAsync(request);
-				return Ok(new
+				return Ok(new ApiResponse<LoginResponse>
 				{
-					success = true,
-					message = "Đăng nhập thành công",
-					data = result
+					Success = true,
+					Message = "Đăng nhập thành công",
+					Data = result
 				});
 			}
 			catch (UnauthorizedAccessException ex)
 			{
-				return Unauthorized(new
+				return Unauthorized(new ApiResponse<LoginResponse?>
 				{
-					success = false,
-					message = ex.Message,
-					data = (object?)null
+					Success = false,
+					Message = ex.Message,
+					Data = null
 				});
 			}
 		}
+
 		[HttpPost("refresh-token")]
 		public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
 		{
 			var result = await _authService.RefreshTokenAsync(request);
 
-			return StatusCode(200, new ApiResponse<object>
+			return StatusCode(StatusCodes.Status200OK, new ApiResponse<LoginResponse>
 			{
 				Success = true,
 				Message = "Làm mới token thành công",

@@ -2,7 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using HMS_Temp_Humdity_Auth.Config;
-using HMS_Temp_Humdity_Auth.Models.HMS_Temp_Humdity_Auth.Models;
+using HMS_Temp_Humdity_Auth.Models;
 using HMS_Temp_Humdity_Auth.Services.Interface;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -51,13 +51,13 @@ namespace HMS_Temp_Humdity_Auth.Services
 
 			var claims = new List<Claim>
 			{
-				new(JwtRegisteredClaimNames.Sub,user.UserId),
-				new(ClaimTypes.NameIdentifier,user.UserId),
-				new(ClaimTypes.Name,user.Username),
-				new(ClaimTypes.Role,user.Role.ToString()),
-				new("companyId",user.CompanyId ?? string.Empty),
-				new("companyPermissions",((long)user.CompanyPermissions).ToString()),
-				new(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString())
+				new(JwtRegisteredClaimNames.Sub, user.UserId),
+				new(ClaimTypes.NameIdentifier, user.UserId),
+				new(ClaimTypes.Name, user.Username),
+				new(ClaimTypes.Role, user.Role.ToString()),
+				new("companyId", user.CompanyId ?? string.Empty),
+				new("companyPermissions", ((long)user.CompanyPermissions).ToString()),
+				new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
 			};
 
 			var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.SecretKey));

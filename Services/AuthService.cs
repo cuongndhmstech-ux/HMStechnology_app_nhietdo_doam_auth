@@ -4,7 +4,7 @@ using System.Text;
 using HMS_Temp_Humdity_Auth.Config;
 using HMS_Temp_Humdity_Auth.Database.Interface;
 using HMS_Temp_Humdity_Auth.DTOs;
-using HMS_Temp_Humdity_Auth.Models.HMS_Temp_Humdity_Auth.Models;
+using HMS_Temp_Humdity_Auth.Models;
 using HMS_Temp_Humdity_Auth.Services.Interface;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -13,13 +13,13 @@ namespace HMS_Temp_Humdity_Auth.Services
 {
 	public class AuthService : IAuthService
 	{
-		private readonly IDAOUserAuth _daoUser;
+		private readonly IDAOUserAuth _userAuthDao;
 		private readonly JwtSettings _jwtSettings;
 		private readonly IJwtService _jwtService;
 
-		public AuthService(IDAOUserAuth daoUser, IOptions<JwtSettings> jwtOptions, IJwtService jwtService)
+		public AuthService(IDAOUserAuth userAuthDao, IOptions<JwtSettings> jwtOptions, IJwtService jwtService)
 		{
-			_daoUser = daoUser;
+			_userAuthDao = userAuthDao;
 			_jwtSettings = jwtOptions.Value;
 			_jwtService = jwtService;
 			ValidateJwtSettings();
@@ -38,7 +38,7 @@ namespace HMS_Temp_Humdity_Auth.Services
 			}
 
 			var phone = request.Phone.Trim();
-			var user = await _daoUser.GetByUsernameAsync(phone);
+			var user = await _userAuthDao.GetByUsernameAsync(phone);
 			if (user == null)
 			{
 				throw new UnauthorizedAccessException("Tên đăng nhập hoặc mật khẩu không đúng");
@@ -73,7 +73,6 @@ namespace HMS_Temp_Humdity_Auth.Services
 				RefreshToken = refreshToken,
 				AccessTokenExpiresAt = accessTokenExpiresAt,
 				RefreshTokenExpiresAt = refreshTokenExpiresAt,
-
 				Role = user.Role
 			};
 		}
@@ -86,13 +85,13 @@ namespace HMS_Temp_Humdity_Auth.Services
 
 			var claims = new List<Claim>
 			{
-				new(JwtRegisteredClaimNames.Sub,user.UserId),
-				new(ClaimTypes.NameIdentifier,user.UserId),
-				new(ClaimTypes.Name,user.Username),
-				new(ClaimTypes.Role,user.Role.ToString()),
-				new(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
-				new("token_type","access"),
-				new("companyPermissions",((long)user.CompanyPermissions).ToString())
+				new(JwtRegisteredClaimNames.Sub, user.UserId),
+				new(ClaimTypes.NameIdentifier, user.UserId),
+				new(ClaimTypes.Name, user.Username),
+				new(ClaimTypes.Role, user.Role.ToString()),
+				new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+				new("token_type", "access"),
+				new("companyPermissions", ((long)user.CompanyPermissions).ToString())
 			};
 
 			if (!string.IsNullOrWhiteSpace(user.CompanyId))
@@ -117,10 +116,10 @@ namespace HMS_Temp_Humdity_Auth.Services
 			var signingCredentials = CreateSigningCredentials();
 			var claims = new List<Claim>
 			{
-				new(JwtRegisteredClaimNames.Sub,user.UserId),
-				new(ClaimTypes.NameIdentifier,user.UserId),
-				new(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
-				new("token_type","refresh")
+				new(JwtRegisteredClaimNames.Sub, user.UserId),
+				new(ClaimTypes.NameIdentifier, user.UserId),
+				new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+				new("token_type", "refresh")
 			};
 
 			var token = new JwtSecurityToken(
@@ -176,7 +175,7 @@ namespace HMS_Temp_Humdity_Auth.Services
 		}
 
 		public async Task<LoginResponse> RefreshTokenAsync(
-	RefreshTokenRequest request)
+			RefreshTokenRequest request)
 		{
 			var principal = _jwtService.ValidateRefreshToken(
 				request.RefreshToken);
@@ -188,7 +187,7 @@ namespace HMS_Temp_Humdity_Auth.Services
 				throw new UnauthorizedAccessException(
 					"Refresh Token không hợp lệ");
 
-			var user = await _daoUser.GetByUserIdAsync(userId);
+			var user = await _userAuthDao.GetByUserIdAsync(userId);
 
 			if (user == null)
 				throw new UnauthorizedAccessException(
@@ -204,13 +203,10 @@ namespace HMS_Temp_Humdity_Auth.Services
 			{
 				AccessToken = accessToken,
 				RefreshToken = refreshToken,
-
 				AccessTokenExpiresAt = DateTime.UtcNow.AddMinutes(
 					_jwtSettings.ExpiresInMinutes),
-
 				RefreshTokenExpiresAt = DateTime.UtcNow.AddDays(
 					_jwtSettings.RefreshTokenExpiresInDays),
-
 				Role = user.Role
 			};
 		}
