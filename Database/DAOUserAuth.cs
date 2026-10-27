@@ -20,9 +20,9 @@ namespace HMS_Temp_Humdity_Auth.Database
 
 			var normalizedUsername = username.Trim();
 
-			var filter = Builders<UserAuthModel>.Filter.Eq(
-				x => x.Username,
-				normalizedUsername
+			var filter = Builders<UserAuthModel>.Filter.Or(
+				Builders<UserAuthModel>.Filter.Eq(x => x.UserName, normalizedUsername),
+				Builders<UserAuthModel>.Filter.Eq(x => x.PhoneNumber, normalizedUsername)
 			);
 
 			return await _context.Users

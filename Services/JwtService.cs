@@ -53,7 +53,7 @@ namespace HMS_Temp_Humdity_Auth.Services
 			{
 				new(JwtRegisteredClaimNames.Sub, user.UserId),
 				new(ClaimTypes.NameIdentifier, user.UserId),
-				new(ClaimTypes.Name, user.Username),
+				new(ClaimTypes.Name, user.UserName),
 				new(ClaimTypes.Role, user.Role.ToString()),
 				new("companyId", user.CompanyId ?? string.Empty),
 				new("companyPermissions", ((long)user.CompanyPermissions).ToString()),

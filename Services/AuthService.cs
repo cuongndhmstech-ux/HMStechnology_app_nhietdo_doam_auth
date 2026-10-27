@@ -87,7 +87,7 @@ namespace HMS_Temp_Humdity_Auth.Services
 			{
 				new(JwtRegisteredClaimNames.Sub, user.UserId),
 				new(ClaimTypes.NameIdentifier, user.UserId),
-				new(ClaimTypes.Name, user.Username),
+				new(ClaimTypes.Name, user.UserName),
 				new(ClaimTypes.Role, user.Role.ToString()),
 				new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
 				new("token_type", "access"),

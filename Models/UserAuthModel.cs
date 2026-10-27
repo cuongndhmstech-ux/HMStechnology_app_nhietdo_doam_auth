@@ -12,7 +12,9 @@ namespace HMS_Temp_Humdity_Auth.Models
 
 		public required string UserId { get; set; }
 
-		public required string Username { get; set; }
+		public required string UserName { get; set; }
+
+		public string? PhoneNumber { get; set; }
 
 		public required string Password { get; set; }
 
